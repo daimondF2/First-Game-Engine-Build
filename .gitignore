@@ -69,6 +69,10 @@ ScaffoldingReadMe.txt
 # StyleCop
 StyleCopReport.xml
 
+# just in case
+*.exe
+vcpkg_installed/
+
 # Files built by Visual Studio
 *_i.c
 *_p.c

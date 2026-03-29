@@ -125,14 +125,17 @@ int main()
     //vertex buffer (first occurance of an openGl object) -unique id correspoding to the buffer
     unsigned int VBO;
     glGenBuffers(1, &VBO); // generates ID
+    unsigned int VAO; //vertex array object - opengl requires as it knows what to do with vertex inputs
+    glGenVertexArrays(1, &VAO);
     //binds the buffers
+    glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO); // array buffer allows bind several buffers at once as long as they are different used for vertex buffer obj
-
+    
     //any buffer calls we make (on the GL_ARRAY_BUFFER target) will be used to configure the currently bound buffer, 
     //which is VBO. Then we can make a call to the glBufferData function that copies the previously defined vertex data into the buffer's memory:
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); //glBufferData is a function specifically targeted to copy user-defined data into the currently bound buffer.
-    //telling OPENGL how to read vertexesd
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);//(which vertex(location), size of attribute, data type, data normalised y/n, 
+    //telling OPENGL how to read vertexesd                                                  Stride tells us the space between consecutive vertex attributes
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);//(which vertex(location), size of attribute, data type, data normalised y/n, stride, void (offset where pos data begins in buffer))
     glEnableVertexAttribArray(0);
 
     while (!glfwWindowShouldClose(window)) //tells the window to keep drawing imagesa and not single image
@@ -145,6 +148,8 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
         //DRAW TRIANGLE
         glUseProgram(shaderProgram);// using shaders
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
 
         // check and call events and swap the buffers

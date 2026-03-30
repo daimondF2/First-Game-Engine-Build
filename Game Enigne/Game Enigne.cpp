@@ -115,13 +115,19 @@ int main()
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
     
-
-    //defining a triangle vertices
-    float vertices[] = {
-    -0.5f, -0.5f, 0.0f,
-     0.5f, -0.5f, 0.0f,
-     0.0f,  0.5f, 0.0f
+    //An EBO is a buffer, just like a vertex buffer object, that stores indices that OpenGL uses to decide what vertices to draw
+    float vertices[] = { //drawing a rectangle using EBO
+     0.5f,  0.5f, 0.0f,  // top right
+     0.5f, -0.5f, 0.0f,  // bottom right
+    -0.5f, -0.5f, 0.0f,  // bottom left
+    -0.5f,  0.5f, 0.0f   // top left 
     };
+    unsigned int indices[] = {  // note that we start from 0!
+        0, 1, 3,   // first triangle
+        1, 2, 3    // second triangle
+    };
+    unsigned int EBO; //createn obj
+    glGenBuffers(1, &EBO);
     //vertex buffer (first occurance of an openGl object) -unique id correspoding to the buffer
     unsigned int VBO;
     glGenBuffers(1, &VBO); // generates ID
@@ -129,6 +135,9 @@ int main()
     glGenVertexArrays(1, &VAO);
     //binds the buffers
     glBindVertexArray(VAO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); //bind ebo
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
     glBindBuffer(GL_ARRAY_BUFFER, VBO); // array buffer allows bind several buffers at once as long as they are different used for vertex buffer obj
     
     //any buffer calls we make (on the GL_ARRAY_BUFFER target) will be used to configure the currently bound buffer, 
@@ -149,20 +158,22 @@ int main()
         //DRAW TRIANGLE
         glUseProgram(shaderProgram);// using shaders
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); //draw 6 veticeies
+        glBindVertexArray(0);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wire frame mode
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        //glDrawArrays(GL_TRIANGLES, 0, 3); replace
 
 
         // check and call events and swap the buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
     glfwTerminate();
     return 0;
 }
-
-
-
-
 
 
 
